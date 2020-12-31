@@ -4,6 +4,8 @@ const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
 const accelerationSleep = 5
+const disallowedSpeedMin = -30
+const disallowedSpeedMax = 30
 let scanning;
 let currentSpeed = 0
 
@@ -36,23 +38,26 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                 ])
                 .then(async answers => {
                     console.clear();
-                    const pleaseWait = ora('Please wait...').start()
+                    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}`)
+                    const pleaseWait = ora('Accelerating to new speed...').start()
                     while (answers.speed != currentSpeed) {
                         if (answers.speed < currentSpeed) {
                             currentSpeed--
-                            await motorA.setPower(currentSpeed)
+                            await setPower(motorA, currentSpeed)
                             await hub.sleep(accelerationSleep)
                         } else {
                             currentSpeed++
-                            await motorA.setPower(currentSpeed)
+                            await setPower(motorA, currentSpeed)
                             await hub.sleep(accelerationSleep)
                         }
                     }
                     currentSpeed = answers.speed
                     pleaseWait.succeed('')
                     console.clear();
-                    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}\n${hub.name} is running at ${answers.speed}.`)
+                    if(answers.speed > disallowedSpeedMin && answers.speed < disallowedSpeedMax == true) currentSpeed = 0
+                    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}\n${hub.name} is running at ${currentSpeed}.`)
                     if(answers.speed >= 95) console.log(`${chalk.yellow("WARNING: 95 and above have been found to be very fast. Expect a crash.")}`)
+                    if(answers.speed > disallowedSpeedMin && answers.speed < disallowedSpeedMax == true && answers.speed != 0) console.log(`${chalk.yellow("WARNING: The speed you have requested may cause damages to your motor.\nFor your protection, the speed has been set to 0.")}`)
                     speedie();
                 })
         }
@@ -67,3 +72,11 @@ function connect() {
     scanning = ora('Scanning for hubs...').start();
 }
 connect()
+
+async function setPower(device, speed) {
+    if(speed > disallowedSpeedMin && speed < disallowedSpeedMax == true) {
+        await device.setPower(0)
+    } else {
+        await device.setPower(speed)
+    }
+}
