@@ -3,8 +3,9 @@ const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
+const accelerationSleep = 5
 let scanning;
-let currentSpeed;
+let currentSpeed = 0
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Hub) {
@@ -36,7 +37,17 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                 .then(async answers => {
                     console.clear();
                     const pleaseWait = ora('Please wait...').start()
-                    await motorA.setPower(answers.speed)
+                    while (answers.speed != currentSpeed) {
+                        if (answers.speed < currentSpeed) {
+                            currentSpeed--
+                            await motorA.setPower(currentSpeed)
+                            await hub.sleep(accelerationSleep)
+                        } else {
+                            currentSpeed++
+                            await motorA.setPower(currentSpeed)
+                            await hub.sleep(accelerationSleep)
+                        }
+                    }
                     currentSpeed = answers.speed
                     pleaseWait.succeed('')
                     console.clear();
