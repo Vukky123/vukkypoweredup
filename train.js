@@ -2,8 +2,9 @@ const PoweredUP = require("node-poweredup");
 const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
-let hubinfodisplay;
-let ready = false;
+const inquirer = require("inquirer");
+let scanning;
+let currentSpeed;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Hub) {
@@ -12,29 +13,46 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
         await hub.connect(); // Connect to the Hub
         connecting.succeed(`Connected to ${hub.name}!`);
         hub.on("disconnect", () => {
-            if(ready) clearInterval(hubinfodisplay);
-            console.clear();
-            console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.redBright("Connection lost")}\nYour hub (${hub.name}) disconnected from Vukky Powered Up.`);
-            process.exit(0);
+            connect()
         })
-        hubinfodisplay = setInterval(() => {
-            if(!ready) return;
-            console.clear();
-            console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Hub Information Display")}`);
-            console.log(`Hub battery level: ${hub.batteryLevel}%`);
-            if(hub.batteryLevel == 0) console.log(`${chalk.yellow("\nWARNING: Something's not right here.")}\nThere might be an issue with your batteries.`)
-        }, 20000);
         const motorAwait = ora(`Looking for a motor connected to port A...`).start();
         const motorA = await hub.waitForDeviceAtPort("A"); // Make sure a motor is plugged into port A
         motorAwait.succeed(`Found a motor connected to port A!`);
-        ready = true;
-        console.log("Running motor A at maximum speed.");
-        motorA.setPower(100);
-        console.log("Hub information will appear soon.");
+        function speedie() {
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'speed',
+                        message: `What should the speed be set to?`,
+                        validate: function (value) {
+                            if (value >= -100 && value <= 100 && value != NaN && value != "") {
+                                return true;
+                            }
+                            return 'Please enter a valid speed. Minimum -100, maximum 100. Use - for reverse.';
+                        },
+                    }
+                ])
+                .then(async answers => {
+                    console.clear();
+                    const pleaseWait = ora('Please wait...').start()
+                    await motorA.setPower(answers.speed)
+                    currentSpeed = answers.speed
+                    pleaseWait.succeed('')
+                    console.clear();
+                    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}\n${hub.name} is running at ${answers.speed}.`)
+                    if(answers.speed >= 95) console.log(`${chalk.yellow("WARNING: 95 and above have been found to be very fast. Expect a crash.")}`)
+                    speedie();
+                })
+        }
+        speedie();
     }
 });
 
-console.clear();
-console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train")}`);
-poweredUP.scan(); // Start scanning for Hubs
-const scanning = ora('Scanning for hubs...').start();
+function connect() {
+    console.clear();
+    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train")}`);
+    poweredUP.scan(); // Start scanning for Hubs
+    scanning = ora('Scanning for hubs...').start();
+}
+connect()
