@@ -8,11 +8,11 @@ let scanning;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Mario) {
-        scanning.succeed(`Found Mario!`);
+        scanning.succeed(`Found LEGO Mario!`);
         const mario = hub;
-        const connecting = ora(`Connecting to Mario...`).start();
+        const connecting = ora(`Connecting to LEGO Mario...`).start();
         await hub.connect(); // Connect to the Hub
-        connecting.succeed(`Connected to Mario!`);
+        connecting.succeed(`Connected to LEGO Mario!`);
         let marioData = {
             pants: 0,
             color: 0,
@@ -61,7 +61,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
 
         function infoDisplay() {
             console.clear();
-            console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Mario Information Display")}`);
+            console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("LEGO Mario Information Display")}`);
             console.log(`Pants: ${humanReadablePants(marioData.pants)}`)
             console.log(`Last scanned barcode: ${humanReadableBarcode(marioData.barcode)} ${humanReadableBarcode(marioData.barcode) !== "Sensor Off" && humanReadableBarcode(marioData.barcode) !== "None"  ? `- scanned ${marioData.scannedInARow} time(s) in a row` : ""}`)
             console.log(`Environment: ${humanReadableColor(marioData.color)}`)
@@ -85,6 +85,8 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     return "Water"
                 case 24:
                     return "Desert"
+                case 26:
+                    return "None"
                 case 37:
                     return "Grass"
                 default:
@@ -172,9 +174,9 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
 
 function connect() {
     console.clear();
-    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Mario")}`);
+    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("LEGO Mario")}`);
     poweredUP.scan(); // Start scanning for Hubs
-    scanning = ora('Looking for Mario...').start();
+    scanning = ora('Looking for LEGO Mario...').start();
 }
 
 connect()
