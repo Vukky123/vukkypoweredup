@@ -8,11 +8,11 @@ let scanning;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Mario) {
-        scanning.succeed(`Found LEGO Mario!`);
+        scanning.succeed(`Found ${hub.name}!`);
         const mario = hub;
-        const connecting = ora(`Connecting to LEGO Mario...`).start();
+        const connecting = ora(`Connecting to ${hub.name}...`).start();
         await hub.connect(); // Connect to the Hub
-        connecting.succeed(`Connected to LEGO Mario!`);
+        connecting.succeed(`Connected to ${hub.name}!`);
         let marioData = {
             pants: 0,
             color: 0,
@@ -50,6 +50,8 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     let treasureBlock = humanReadableBarcode(barcode).substr(-1)
                     if(marioData.goals.treasureBlocks == null) marioData.goals.treasureBlocks = []
                     if(!marioData.goals.treasureBlocks.includes(treasureBlock)) marioData.goals.treasureBlocks.push(treasureBlock)
+                } else if (humanReadableBarcode(barcode) == "Finish Flag") {
+                    marioData.goals.treasureBlocks = null;
                 }
                 infoDisplay()
             }
@@ -65,13 +67,34 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             console.log(`Pants: ${humanReadablePants(marioData.pants)}`)
             console.log(`Last scanned barcode: ${humanReadableBarcode(marioData.barcode)} ${humanReadableBarcode(marioData.barcode) !== "Sensor Off" && humanReadableBarcode(marioData.barcode) !== "None"  ? `- scanned ${marioData.scannedInARow} time(s) in a row` : ""}`)
             console.log(`Environment: ${humanReadableColor(marioData.color)}`)
-            console.log(`Last (non-0) gesture: ${marioData.gesture}`)
+            console.log(`\n${chalk.greenBright("GOALS")}`)
             if(marioData.goals.treasureBlocks !== null) {
                 let treasures = marioData.goals.treasureBlocks
-                console.log(`\n${treasures.includes("1") && treasures.includes("2") && treasures.includes("3") ? `${chalk.blueBright(`Treasure Blocks`)} - ${chalk.green(`All Treasure Blocks found!`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
-                if(treasures.includes("1")) console.log("Treasure Block 1")
-                if(treasures.includes("2")) console.log("Treasure Block 2")
-                if(treasures.includes("3")) console.log("Treasure Block 3")
+                let allTreasuresUnlocked = treasures.includes("1") && treasures.includes("2") && treasures.includes("3") == true
+                console.log(`${allTreasuresUnlocked ? `${chalk.green(`✔️ Treasure Blocks`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
+                if(!allTreasuresUnlocked) {
+                    if(treasures.includes("1")) console.log("Treasure Block 1")
+                    if(treasures.includes("2")) console.log("Treasure Block 2")
+                    if(treasures.includes("3")) console.log("Treasure Block 3")
+                }
+            } else {
+                console.log("You haven't unlocked any goals yet.")
+            }
+            console.log(`\n${chalk.yellow("EXPERIMENTAL SECTION")}`)
+            console.log(`Last gesture: ${humanReadableGesture(marioData.gesture)}`)
+            console.log(`Name: ${hub.name}`)
+        }
+
+        function humanReadableGesture(gesture) {
+            switch(gesture) {
+                case 0:
+                    return "None"
+                case 16:
+                    return "Jump"
+                case 32:
+                    return "Sleep"
+                default:
+                    return `Unknown (${gesture})`
             }
         }
 
@@ -125,12 +148,16 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     return "Thwomp"
                 case 14:
                     return "Bob-Omb"
+                case 21:
+                    return "Timer Block"
                 case 16:
                     return "Spinning Platform"
                 case 29:
                     return "Bowser"
                 case 30:
                     return "Spinning Bullet Bills"
+                case 33:
+                    return "Treasure Block 1"
                 case 41:
                     return "Question Mark Block"
                 case 43:
