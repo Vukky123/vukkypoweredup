@@ -2,6 +2,9 @@ const PoweredUP = require("node-poweredup");
 const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
+const inquirer = require("inquirer");
+const ui = new inquirer.ui.BottomBar()
+let scanning;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Mario) {
@@ -45,9 +48,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
         });
 
         mario.on("disconnect", () => {
-            console.clear();
-            console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.redBright("Connection lost")}\nYour Mario disconnected from Vukky Powered Up.`);
-            process.exit(0);
+            connect()
         });
 
         function infoDisplay() {
@@ -134,7 +135,11 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     }
 });
 
-console.clear();
-console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Mario")}`);
-poweredUP.scan(); // Start scanning for Hubs
-const scanning = ora('Looking for Mario...').start();
+function connect() {
+    console.clear();
+    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Mario")}`);
+    poweredUP.scan(); // Start scanning for Hubs
+    scanning = ora('Looking for Mario...').start();
+}
+
+connect()
