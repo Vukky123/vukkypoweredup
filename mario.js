@@ -17,6 +17,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             pants: 0,
             color: 0,
             barcode: 0,
+            gesture: 0,
             scannedInARow: 0,
             goals: {
                 treasureBlocks: null
@@ -28,9 +29,16 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             infoDisplay()
         });
 
+        mario.on("gesture", (_, { gesture }) => {
+            if(gesture == 0) return;
+            marioData.gesture = gesture;
+            infoDisplay()
+        });
+
         mario.on("barcode", (_, { barcode, color }) => {
             if (color) {
                 marioData.color = color
+                infoDisplay()
             } else if (barcode) {
                 if (barcode == marioData.barcode) {
                     marioData.scannedInARow += 1;
@@ -56,12 +64,31 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Mario Information Display")}`);
             console.log(`Pants: ${humanReadablePants(marioData.pants)}`)
             console.log(`Last scanned barcode: ${humanReadableBarcode(marioData.barcode)} ${humanReadableBarcode(marioData.barcode) !== "Sensor Off" && humanReadableBarcode(marioData.barcode) !== "None"  ? `- scanned ${marioData.scannedInARow} time(s) in a row` : ""}`)
+            console.log(`Environment: ${humanReadableColor(marioData.color)}`)
+            console.log(`Last (non-0) gesture: ${marioData.gesture}`)
             if(marioData.goals.treasureBlocks !== null) {
                 let treasures = marioData.goals.treasureBlocks
                 console.log(`\n${treasures.includes("1") && treasures.includes("2") && treasures.includes("3") ? `${chalk.blueBright(`Treasure Blocks`)} - ${chalk.green(`All Treasure Blocks found!`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
                 if(treasures.includes("1")) console.log("Treasure Block 1")
                 if(treasures.includes("2")) console.log("Treasure Block 2")
                 if(treasures.includes("3")) console.log("Treasure Block 3")
+            }
+        }
+
+        function humanReadableColor(color) {
+            switch(color) {
+                case 0:
+                    return "None"
+                case 21:
+                    return "Lava"
+                case 23:
+                    return "Water"
+                case 24:
+                    return "Desert"
+                case 37:
+                    return "Grass"
+                default:
+                    return `Unknown (${color})`
             }
         }
 
@@ -92,10 +119,16 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     return "(Para)goomba/Fuzzy"
                 case 3:
                     return "Shy Guy"
+                case 4:
+                    return "Thwomp"
                 case 14:
                     return "Bob-Omb"
+                case 16:
+                    return "Spinning Platform"
                 case 29:
                     return "Bowser"
+                case 30:
+                    return "Spinning Bullet Bills"
                 case 41:
                     return "Question Mark Block"
                 case 43:
@@ -104,6 +137,8 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     return "Cloud"
                 case 48:
                     return "Spiny"
+                case 54:
+                    return "Koopa Troopa"
                 case 60:
                     return "Toad"
                 case 93:
