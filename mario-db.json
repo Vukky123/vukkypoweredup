@@ -14,13 +14,13 @@
         "43": "Treasure Block 2",
         "46": "Cloud",
         "48": "Spiny",
-        "54": "Koopa Troopa",
         "60": "Toad",
         "91": "POW-Block",
         "93": "Yoshi",
         "95": "P-Switch",
         "99": "Super Mushroom",
         "112": "Fortress Gate",
+        "115": "Koopa Troopa",
         "123": "Super Star Block",
         "128": "Treasure Block 3",
         "129": "Boo/Peepa",
@@ -32,6 +32,8 @@
     },
     "pants": {
         "0": "None",
+        "12": "Propeller",
+        "19": "Fire",
         "33": "Standard"
     },
     "colors": {
