@@ -1,0 +1,45 @@
+{
+    "blocks": {
+        "0": "None",
+        "2": "(Para)goomba/Fuzzy/Lava Bubble",
+        "3": "Shy Guy",
+        "4": "Thwomp",
+        "14": "Bob-Omb",
+        "21": "Time Block",
+        "16": "Spinning Platform",
+        "29": "Bowser",
+        "30": "Spinning Bullet Bills",
+        "33": "Treasure Block 1",
+        "41": "? Block",
+        "43": "Treasure Block 2",
+        "46": "Cloud",
+        "48": "Spiny",
+        "54": "Koopa Troopa",
+        "60": "Toad",
+        "91": "POW-Block",
+        "93": "Yoshi",
+        "95": "P-Switch",
+        "99": "Super Mushroom",
+        "112": "Fortress Gate",
+        "123": "Super Star Block",
+        "128": "Treasure Block 3",
+        "129": "Boo/Peepa",
+        "137": "Blooper/Eep Cheep",
+        "153": "Bowser Jr.",
+        "184": "Start Pipe",
+        "183": "Goal Flag",
+        "65535": "Sensor Off"
+    },
+    "pants": {
+        "0": "None",
+        "33": "Standard"
+    },
+    "colors": {
+        "0": "None",
+        "21": "Lava",
+        "37": "Grass"
+    },
+    "gestures": {
+        "0": "None"
+    }
+}

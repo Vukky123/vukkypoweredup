@@ -4,6 +4,7 @@ const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
 const ui = new inquirer.ui.BottomBar()
+const database = require("./mario-db.json")
 let scanning;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
@@ -86,114 +87,34 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
         }
 
         function humanReadableGesture(gesture) {
-            switch(gesture) {
-                case 0:
-                    return "None"
-                case 16:
-                    return "Jump"
-                case 32:
-                    return "Sleep"
-                default:
-                    return `Unknown (${gesture})`
+            if(database.gestures[gesture]) {
+                return database.gestures[gesture]
+            } else {
+                return `Unknown (${gesture})`
             }
         }
 
         function humanReadableColor(color) {
-            switch(color) {
-                case 0:
-                    return "None"
-                case 21:
-                    return "Lava"
-                case 23:
-                    return "Water"
-                case 24:
-                    return "Desert"
-                case 26:
-                    return "None"
-                case 37:
-                    return "Grass"
-                default:
-                    return `Unknown (${color})`
+            if(database.colors[color]) {
+                return database.colors[color]
+            } else {
+                return `Unknown (${color})`
             }
         }
 
         function humanReadablePants(pants) {
-            switch(pants) {
-                case 0:
-                    return "None"
-                case 12:
-                    return "Propeller"
-                case 17:
-                    return "Cat"
-                case 18:
-                    return "Fire"
-                case 32:
-                    return "Standard (Bluetooth Prompt)"
-                case 33:
-                    return "Standard"
-                default:
-                    return `Unknown (${pants})`
+            if(database.pants[pants]) {
+                return database.pants[pants]
+            } else {
+                return `Unknown (${pants})`
             }
         }
 
         function humanReadableBarcode(barcode) {
-            switch(barcode) {
-                case 0:
-                    return "None"
-                case 2:
-                    return "(Para)goomba/Fuzzy"
-                case 3:
-                    return "Shy Guy"
-                case 4:
-                    return "Thwomp"
-                case 14:
-                    return "Bob-Omb"
-                case 21:
-                    return "Timer Block"
-                case 16:
-                    return "Spinning Platform"
-                case 29:
-                    return "Bowser"
-                case 30:
-                    return "Spinning Bullet Bills"
-                case 33:
-                    return "Treasure Block 1"
-                case 41:
-                    return "Question Mark Block"
-                case 43:
-                    return "Treasure Block 2"
-                case 46:
-                    return "Cloud"
-                case 48:
-                    return "Spiny"
-                case 54:
-                    return "Koopa Troopa"
-                case 60:
-                    return "Toad"
-                case 93:
-                    return "Yoshi"
-                case 95:
-                    return "P-Block"
-                case 99:
-                    return "Super Mushroom"
-                case 123:
-                    return "Super Star Block"
-                case 128:
-                    return "Treasure Block 3"
-                case 129:
-                    return "Peepa"
-                case 137:
-                    return "Blooper/Eep Cheep"
-                case 153:
-                    return "Bowser Jr."
-                case 184:
-                    return "Start Pipe"
-                case 183:
-                    return "Finish Flag"
-                case 65535:
-                    return "Sensor Off"
-                default:
-                    return `Unknown (${barcode})`
+            if(database.blocks[barcode]) {
+                return database.blocks[barcode]
+            } else {
+                return `Unknown (${barcode})`
             }
         }
     }
