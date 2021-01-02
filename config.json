@@ -1,0 +1,22 @@
+{
+    "train": {
+        "reconnect": true,
+        "defaultSpeed": "75",
+        "defaultSpeedComment": "If you don't want to use defaultSpeed, set it to null.",
+        "motor": "A"
+    },
+    "mario": {
+        "reconnect": true
+    },
+    "spinner": {
+        "interval": 200,
+        "frames": [
+            ".  ",
+            ".. ",
+            "...",
+            " ..",
+            "  .",
+            "   "
+        ]
+    }
+}

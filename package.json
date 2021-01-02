@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mario": "node src/mario",
-    "rename": "node src/hubrename",
-    "train": "node src/train"
+    "mario": "node mario",
+    "rename": "node hubrename",
+    "train": "node train",
+    "settings": "node settings"
   },
   "author": "Vukky",
   "license": "ISC",
