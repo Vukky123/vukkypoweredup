@@ -1,0 +1,19 @@
+{
+    "train": {
+        "reconnect": true
+    },
+    "mario": {
+        "reconnect": true
+    },
+    "spinner": {
+		"interval": 200,
+		"frames": [
+			".  ",
+			".. ",
+			"...",
+			" ..",
+			"  .",
+			"   "
+		]
+	}
+}

@@ -3,6 +3,7 @@ const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
+const config = require("./config.json");
 const accelerationSleep = 5
 const disallowedSpeedMin = -30
 const disallowedSpeedMax = 30
@@ -11,16 +12,20 @@ let currentSpeed = 0
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Hub) {
-        scanning.succeed(`Discovered ${hub.name}!`);
-        const connecting = ora(`Connecting to ${hub.name}...`).start();
+        spinner.text = `Connecting to ${hub.name}...`
         await hub.connect(); // Connect to the Hub
-        connecting.succeed(`Connected to ${hub.name}!`);
         hub.on("disconnect", () => {
-            connect()
+            if(!config.train.reconnect) {
+                console.clear();
+                console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.redBright("Connection lost")}\n${hub.name} disconnected from Vukky Powered Up.`);
+                process.exit(0);
+            } else {
+                connect()
+            }
         })
-        const motorAwait = ora(`Looking for a motor connected to port A...`).start();
+        spinner.text = `Looking for a motor connected to port A...`
         const motorA = await hub.waitForDeviceAtPort("A"); // Make sure a motor is plugged into port A
-        motorAwait.succeed(`Found a motor connected to port A!`);
+        spinner.succeed(`Ready!`);
         function speedie() {
             inquirer
                 .prompt([
@@ -39,7 +44,8 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                 .then(async answers => {
                     console.clear();
                     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}`)
-                    const pleaseWait = ora('Accelerating to new speed...').start()
+                    spinner = ora('Accelerating to new speed...').start();
+                    spinner.spinner = config.spinner
                     while (answers.speed != currentSpeed) {
                         if (answers.speed < currentSpeed) {
                             currentSpeed--
@@ -52,7 +58,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                         }
                     }
                     currentSpeed = answers.speed
-                    pleaseWait.succeed('')
+                    spinner.succeed('')
                     console.clear();
                     if(answers.speed > disallowedSpeedMin && answers.speed < disallowedSpeedMax == true) currentSpeed = 0
                     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}\n${hub.name} is running at ${currentSpeed}.`)
@@ -69,7 +75,8 @@ function connect() {
     console.clear();
     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train")}`);
     poweredUP.scan(); // Start scanning for Hubs
-    scanning = ora('Scanning for hubs...').start();
+    spinner = ora('Looking for hubs...').start();
+    spinner.spinner = config.spinner
 }
 connect()
 

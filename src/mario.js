@@ -3,17 +3,16 @@ const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
-const ui = new inquirer.ui.BottomBar()
-const database = require("./mario-db.json")
+const database = require("../mario-db.json")
+const config = require("./config.json")
 let scanning;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Mario) {
-        scanning.succeed(`Found ${hub.name}!`);
         const mario = hub;
-        const connecting = ora(`Connecting to ${hub.name}...`).start();
+        spinner.text = `Connecting to ${hub.name}...`
         await hub.connect(); // Connect to the Hub
-        connecting.succeed(`Connected to ${hub.name}!`);
+        spinner.succeed(`Connected to ${hub.name}!`);
         let marioData = {
             pants: 0,
             color: 0,
@@ -59,7 +58,13 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
         });
 
         mario.on("disconnect", () => {
-            connect()
+            if(!config.mario.reconnect) {
+                console.clear();
+                console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.redBright("Connection lost")}\nYour LEGO Mario disconnected from Vukky Powered Up.`);
+                process.exit(0);
+            } else {
+                connect()
+            }
         });
 
         function infoDisplay() {
@@ -124,7 +129,8 @@ function connect() {
     console.clear();
     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("LEGO Mario")}`);
     poweredUP.scan(); // Start scanning for Hubs
-    scanning = ora('Looking for LEGO Mario...').start();
+    spinner = ora('Looking for LEGO Mario...').start();
+    spinner.spinner = config.spinner
 }
 
 connect()
