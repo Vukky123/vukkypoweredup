@@ -149,6 +149,8 @@ function marioSettings() {
                 message: 'What setting would you like to change?',
                 choices: [
                     'Reconnecting',
+                    'Experimental section',
+                    'Goals section',
                     new inquirer.Separator(),
                     'Go back'
                 ],
@@ -169,6 +171,38 @@ function marioSettings() {
                     ])
                     .then((answers) => {
                         config.mario.reconnect = answers.settings
+                        marioSettings()
+                    });
+            }
+            if(answers.settings == 'Experimental section') {
+                console.clear();
+                console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Settings")}`);
+                inquirer
+                    .prompt([
+                        {
+                            type: 'confirm',
+                            name: 'settings',
+                            message: 'Should the experimental section be enabled?'
+                        },
+                    ])
+                    .then((answers) => {
+                        config.mario.showExperimental = answers.settings
+                        marioSettings()
+                    });
+            }
+            if(answers.settings == 'Goals section') {
+                console.clear();
+                console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Settings")}`);
+                inquirer
+                    .prompt([
+                        {
+                            type: 'confirm',
+                            name: 'settings',
+                            message: 'Should the goals section be enabled?'
+                        },
+                    ])
+                    .then((answers) => {
+                        config.mario.showGoals = answers.settings
                         marioSettings()
                     });
             }

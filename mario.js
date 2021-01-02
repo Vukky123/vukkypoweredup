@@ -3,7 +3,7 @@ const ora = require("ora");
 const poweredUP = new PoweredUP.PoweredUP();
 const chalk = require("chalk");
 const inquirer = require("inquirer");
-const database = require("../mario-db.json")
+const database = require("./mario-db.json")
 const config = require("./config.json")
 let scanning;
 
@@ -73,22 +73,26 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             console.log(`Pants: ${humanReadablePants(marioData.pants)}`)
             console.log(`Last scanned barcode: ${humanReadableBarcode(marioData.barcode)} ${humanReadableBarcode(marioData.barcode) !== "Sensor Off" && humanReadableBarcode(marioData.barcode) !== "None"  ? `- scanned ${marioData.scannedInARow} time(s) in a row` : ""}`)
             console.log(`Environment: ${humanReadableColor(marioData.color)}`)
-            console.log(`\n${chalk.greenBright("GOALS")}`)
-            if(marioData.goals.treasureBlocks !== null) {
-                let treasures = marioData.goals.treasureBlocks
-                let allTreasuresUnlocked = treasures.includes("1") && treasures.includes("2") && treasures.includes("3") == true
-                console.log(`${allTreasuresUnlocked ? `${chalk.green(`✔️ Treasure Blocks`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
-                if(!allTreasuresUnlocked) {
-                    if(treasures.includes("1")) console.log("Treasure Block 1")
-                    if(treasures.includes("2")) console.log("Treasure Block 2")
-                    if(treasures.includes("3")) console.log("Treasure Block 3")
+            if(config.mario.showGoals) {
+                console.log(`\n${chalk.greenBright("GOALS")}`)
+                if(marioData.goals.treasureBlocks !== null) {
+                    let treasures = marioData.goals.treasureBlocks
+                    let allTreasuresUnlocked = treasures.includes("1") && treasures.includes("2") && treasures.includes("3") == true
+                    console.log(`${allTreasuresUnlocked ? `${chalk.green(`✔️ Treasure Blocks`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
+                    if(!allTreasuresUnlocked) {
+                        if(treasures.includes("1")) console.log("Treasure Block 1")
+                        if(treasures.includes("2")) console.log("Treasure Block 2")
+                        if(treasures.includes("3")) console.log("Treasure Block 3")
+                    }
+                } else {
+                    console.log("You haven't unlocked any goals yet.")
                 }
-            } else {
-                console.log("You haven't unlocked any goals yet.")
             }
-            console.log(`\n${chalk.yellow("EXPERIMENTAL SECTION")}`)
-            console.log(`Last gesture: ${humanReadableGesture(marioData.gesture)}`)
-            console.log(`Name: ${hub.name}`)
+            if(config.mario.showExperimental) {
+                console.log(`\n${chalk.yellow("EXPERIMENTAL SECTION")}`)
+                console.log(`Last gesture: ${humanReadableGesture(marioData.gesture)}`)
+                console.log(`Name: ${hub.name}`)
+            }
         }
 
         function humanReadableGesture(gesture) {

@@ -6,7 +6,9 @@
         "motor": "A"
     },
     "mario": {
-        "reconnect": true
+		"reconnect": true,
+		"showExperimental": false,
+		"showGoals": true
     },
     "spinner": {
         "interval": 200,
