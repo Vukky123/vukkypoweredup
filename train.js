@@ -56,7 +56,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     console.clear();
                     if(answers.speed > disallowedSpeedMin && answers.speed < disallowedSpeedMax == true) currentSpeed = 0
                     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Train Control")}\n${hub.name} is running at ${currentSpeed}.`)
-                    if(answers.speed >= 95) console.log(`${chalk.yellow("WARNING: 95 and above have been found to be very fast. Expect a crash.")}`)
+                    if(answers.speed >= 95 || answers.speed <= -95) console.log(`${chalk.yellow("WARNING: 95 and above have been found to be very fast. Expect a crash.")}`)
                     if(answers.speed > disallowedSpeedMin && answers.speed < disallowedSpeedMax == true && answers.speed != 0) console.log(`${chalk.yellow("WARNING: The speed you have requested may cause damages to your motor.\nFor your protection, the speed has been set to 0.")}`)
                     speedie();
                 })
