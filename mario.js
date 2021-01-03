@@ -50,7 +50,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                     let treasureBlock = humanReadableBarcode(barcode).substr(-1)
                     if(marioData.goals.treasureBlocks == null) marioData.goals.treasureBlocks = []
                     if(!marioData.goals.treasureBlocks.includes(treasureBlock)) marioData.goals.treasureBlocks.push(treasureBlock)
-                } else if (humanReadableBarcode(barcode) == "Finish Flag") {
+                } else if (humanReadableBarcode(barcode) == "Goal Flag") {
                     marioData.goals.treasureBlocks = null;
                 }
                 infoDisplay()
@@ -75,10 +75,11 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             console.log(`Environment: ${humanReadableColor(marioData.color)}`)
             if(config.mario.showGoals) {
                 console.log(`\n${chalk.greenBright("GOALS")}`)
+                console.log("To reset goals, stand on the Goal Flag.\n")
                 if(marioData.goals.treasureBlocks !== null) {
                     let treasures = marioData.goals.treasureBlocks
                     let allTreasuresUnlocked = treasures.includes("1") && treasures.includes("2") && treasures.includes("3") == true
-                    console.log(`${allTreasuresUnlocked ? `${chalk.green(`✔️ Treasure Blocks`)}` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
+                    console.log(`${allTreasuresUnlocked ? `✔️ Treasure Blocks` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
                     if(!allTreasuresUnlocked) {
                         if(treasures.includes("1")) console.log("Treasure Block 1")
                         if(treasures.includes("2")) console.log("Treasure Block 2")
