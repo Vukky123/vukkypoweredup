@@ -19,6 +19,7 @@ function menu() {
                 choices: [
                     'Change Train settings',
                     'Change LEGO Mario settings',
+                    'Change spinner settings',
                     new inquirer.Separator(),
                     'Save changes and exit',
                     'Discard changes and exit'
@@ -28,6 +29,7 @@ function menu() {
         .then(async answers => {
             if(answers.settings == 'Change LEGO Mario settings') marioSettings()
             if(answers.settings == 'Change Train settings') trainSettings()
+            if(answers.settings == 'Change spinner settings') spinnerSettings()
             if(answers.settings == 'Save changes and exit') {
                 const spinner = ora('Saving changes...').start();
                 spinner.spinner = config.spinner
@@ -47,6 +49,64 @@ function menu() {
                 console.clear()
                 console.log("Your changes have been discarded.")
                 process.exit(0)
+            }
+        });
+}
+
+function spinnerSettings() {
+    console.clear();
+    console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Settings")}`);
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'settings',
+                message: 'What do you want to do?',
+                choices: [
+                    'Unicode',
+                    new inquirer.Separator(),
+                    'Go back'
+                ],
+            },
+        ])
+        .then(async answers => {
+            if(answers.settings == 'Go back') menu()
+            if(answers.settings == 'Unicode') {
+                console.clear();
+                console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("Settings")}`);
+                inquirer
+                    .prompt([
+                        {
+                            type: 'confirm',
+                            name: 'unicode',
+                            message: 'Should Unicode characters be used in the spinner?'
+                        },
+                    ])
+                    .then((answers) => {
+                        if(answers.unicode == true) {
+                            config.spinner = {
+                                "interval": 125,
+                                "frames": [
+                                    "∙∙∙",
+                                    "●∙∙",
+                                    "∙●∙",
+                                    "∙∙●",
+                                    "∙∙∙"
+                                ]
+                            }
+                        } else {
+                            config.spinner = {
+                                "interval": 130,
+                                "frames": [
+                                    "-",
+                                    "\\",
+                                    "|",
+                                    "/"
+                                ]
+                            }
+                        }
+                        spinnerSettings()
+                    });
             }
         });
 }

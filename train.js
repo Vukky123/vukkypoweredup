@@ -1,6 +1,8 @@
 const PoweredUP = require("node-poweredup");
 const config = require("./config.json");
 const ora = require("ora");
+const chalk = require("chalk");
+const inquirer = require("inquirer");
 const poweredUP = new PoweredUP.PoweredUP();
 const accelerationSleep = 5
 const disallowedSpeedMin = -30

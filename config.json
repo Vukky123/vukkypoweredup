@@ -3,21 +3,21 @@
         "reconnect": true,
         "defaultSpeed": "75",
         "defaultSpeedComment": "If you don't want to use defaultSpeed, set it to null.",
-		"motor": "A"
+        "motor": "A"
     },
     "mario": {
-		"reconnect": true,
-		"showExperimental": false,
-		"showGoals": true
+        "reconnect": true,
+        "showExperimental": false,
+        "showGoals": true
     },
     "spinner": {
-		"interval": 125,
-		"frames": [
-			"∙∙∙",
-			"●∙∙",
-			"∙●∙",
-			"∙∙●",
-			"∙∙∙"
-		]
-	}
+        "interval": 125,
+        "frames": [
+            "∙∙∙",
+            "●∙∙",
+            "∙●∙",
+            "∙∙●",
+            "∙∙∙"
+        ]
+    }
 }
