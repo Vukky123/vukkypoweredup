@@ -36,7 +36,8 @@
         "12": "Propeller",
         "19": "Fire",
         "32": "Standard (Bluetooth Prompt)",
-        "33": "Standard"
+        "33": "Standard",
+        "34": "Builder"
     },
     "colors": {
         "0": "None",
