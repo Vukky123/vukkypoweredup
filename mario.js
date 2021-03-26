@@ -5,13 +5,14 @@ const chalk = require("chalk");
 const inquirer = require("inquirer");
 const database = require("./mario-db.json")
 const config = require("./config.json")
-let scanning;
+let searchy;
 
 poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     if (hub instanceof PoweredUP.Mario) {
         const mario = hub;
         spinner.text = `Connecting to ${hub.name}...`
         await hub.connect(); // Connect to the Hub
+        clearInterval(searchy);
         spinner.succeed(`Connected to ${hub.name}!`);
         let marioData = {
             pants: 0,
@@ -20,7 +21,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             gesture: 0,
             scannedInARow: 0,
             goals: {
-                treasureBlocks: null
+                nope: "nope"
             }
         }
 
@@ -39,7 +40,8 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             if (color) {
                 marioData.color = color
                 infoDisplay()
-            } else if (barcode) {
+            } 
+            if (barcode) {
                 if (barcode == marioData.barcode) {
                     marioData.scannedInARow += 1;
                 } else {
@@ -48,10 +50,13 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                 marioData.barcode = barcode
                 if (humanReadableBarcode(barcode).startsWith("Treasure Block")) {
                     let treasureBlock = humanReadableBarcode(barcode).substr(-1)
-                    if(marioData.goals.treasureBlocks == null) marioData.goals.treasureBlocks = []
+                    if(marioData.goals.treasureBlocks == undefined) marioData.goals.treasureBlocks = []
                     if(!marioData.goals.treasureBlocks.includes(treasureBlock)) marioData.goals.treasureBlocks.push(treasureBlock)
                 } else if (humanReadableBarcode(barcode) == "Goal Flag") {
-                    marioData.goals.treasureBlocks = null;
+                    marioData.goals = {nope: "nope"};
+                } else if (humanReadableBarcode(barcode) == "Yoshi" || humanReadableBarcode(barcode) == "Toad" || humanReadableBarcode(barcode) == "Toadette") {
+                    if(marioData.goals.talkToFriends == undefined) marioData.goals.talkToFriends = []
+                    if(!marioData.goals.talkToFriends.includes(humanReadableBarcode(barcode))) marioData.goals.talkToFriends.push(humanReadableBarcode(barcode))
                 }
                 infoDisplay()
             }
@@ -63,7 +68,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                 console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.redBright("Connection lost")}\nYour LEGO Mario disconnected from Vukky Powered Up.`);
                 process.exit(0);
             } else {
-                connect()
+                connect(true)
             }
         });
 
@@ -76,7 +81,7 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
             if(config.mario.showGoals) {
                 console.log(`\n${chalk.greenBright("GOALS")}`)
                 console.log("To reset goals, stand on the Goal Flag.\n")
-                if(marioData.goals.treasureBlocks !== null) {
+                if(marioData.goals.treasureBlocks !== undefined) {
                     let treasures = marioData.goals.treasureBlocks
                     let allTreasuresUnlocked = treasures.includes("1") && treasures.includes("2") && treasures.includes("3") == true
                     console.log(`${allTreasuresUnlocked ? `✔️ Treasure Blocks` : `${chalk.blueBright(`Treasure Blocks`)}`}`)
@@ -85,7 +90,18 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
                         if(treasures.includes("2")) console.log("Treasure Block 2")
                         if(treasures.includes("3")) console.log("Treasure Block 3")
                     }
-                } else {
+                }
+                if(marioData.goals.talkToFriends !== undefined) {
+                    let friends = marioData.goals.talkToFriends
+                    let talkedToFriends = friends.includes("Yoshi") && friends.includes("Toad") && friends.includes("Toadette") == true
+                    console.log(`${talkedToFriends ? `✔️ Talk to friends` : `${chalk.blueBright(`Talk to friends`)}`}`)
+                    if(!talkedToFriends) {
+                        if(friends.includes("Yoshi")) console.log("Yoshi")
+                        if(friends.includes("Toad")) console.log("Toad")
+                        if(friends.includes("Toadette")) console.log("Toadette")
+                    }
+                }
+                if(Object.keys(marioData.goals).length == 1) {
                     console.log("You haven't unlocked any goals yet.")
                 }
             }
@@ -130,9 +146,18 @@ poweredUP.on("discover", async (hub) => { // Wait to discover a Hub
     }
 });
 
-function connect() {
+function connect(disconnect) {
     console.clear();
     console.log(`${chalk.green("Vukky Powered Up!")} ${chalk.blueBright("LEGO Mario")}`);
+    if(disconnect == true) {
+        console.log("Your LEGO Mario disconnected from Vukky Powered Up.\nWe'll try reconnecting, although you might need to restart the script or make Mario connect again.\nYour data has been lost - sorry!\n");
+    }
+    searchy = setInterval(() => {
+        spinner.stop();
+        poweredUP.scan(); // Start scanning for Hubs
+        spinner = ora('Looking for LEGO Mario...').start();
+        spinner.spinner = config.spinner
+    }, 5000);
     poweredUP.scan(); // Start scanning for Hubs
     spinner = ora('Looking for LEGO Mario...').start();
     spinner.spinner = config.spinner

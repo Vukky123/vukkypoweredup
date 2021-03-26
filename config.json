@@ -7,7 +7,7 @@
     },
     "mario": {
         "reconnect": true,
-        "showExperimental": false,
+        "showExperimental": true,
         "showGoals": true
     },
     "spinner": {
